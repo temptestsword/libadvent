@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra 
+CFLAGS = -Wall -Wextra -Werror
 OUT_DIR = build
 OUT_NAME = demo
 PROJ_DIR = src
