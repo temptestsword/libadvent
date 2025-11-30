@@ -3,9 +3,6 @@
 // --- Global Definitions --- //
 
 
-int playerHealth = 80;
-int playerAttack = 15;
-char playerName[20] = "";
 
 Item* g_inventory = NULL;  // Linked-list inventory root
 Player player = {"player", &g_inventory, 80, 15};
@@ -29,7 +26,9 @@ int main() {
     printColor("Enter your name, adventurer: ", adv_grey);
     getstring(player.name, strlen(player.name));
 
-    printColor("Ahh, welcome %s\n", player.name);
+    printf("Welcome %s! \n", player.name);
+    ui_wait();
+    sys_sleep(2);
     gameLoop();
 
     printColor("\nGoodbye!\n", adv_grey);
@@ -56,7 +55,7 @@ void gameLoop() {
 
         // Validate the choice
         if (choice < '0' || choice > '3') {
-            printf("Invalid choice. Please enter a number between 0 and 6.\n");
+            printf("Invalid choice - Enter a number (0-3)\n");
             sys_sleep(1);
             continue;  // Retry input
         }

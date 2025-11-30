@@ -17,4 +17,4 @@ run:
 	clear
 	./$(OUT_DIR)/$(OUT_NAME)
 
-.PHONY: all compile devbuild run clean
+.PHONY: all compile devbuild run
