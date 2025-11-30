@@ -38,7 +38,7 @@ void combatscene(Player player, Entity enemy) {
             removeItem(player.inventory, "Healing Potion");
             printf("You used a Healing Potion! Your health is now %d.\n", player.health);
         } else if (strcmp(action, "3") == 0) {
-            if (enemy.isPassive = true){
+            if (enemy.isPassive == true){
                 printf("You successfully ran away!");
                 ranAway = true;
             } else {

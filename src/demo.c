@@ -56,7 +56,7 @@ void gameLoop() {
 
         // Validate the choice
         if (choice < '0' || choice > '3') {
-            printf("Invalid choice. Please enter a number between 0 and 3.\n");
+            printf("Invalid choice. Please enter a number between 0 and 6.\n");
             sys_sleep(1);
             continue;  // Retry input
         }

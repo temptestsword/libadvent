@@ -11,8 +11,10 @@ compile:
 	$(CC) -O3 -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
 
 devbuild:
-	$(CC) $(CFLAGS) -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
+	$(CC) $(CFLAGS) -O0 -g -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
 
 run:
 	clear
 	./$(OUT_DIR)/$(OUT_NAME)
+
+.PHONY: all compile devbuild run clean

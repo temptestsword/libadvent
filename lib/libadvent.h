@@ -162,7 +162,8 @@ static void freeInventory(Item** inventory) {
 // --------- Input/Output Utils --------- //
 
 static void clearInputBuffer() {
-    while (getchar() != '\n');  // Clear the input buffer
+    char input;
+    while ((input = getchar()) != '\n' && input != EOF);  // Clear the input buffer
 }
 
 static void getstring(char* variable, int sizeofvariable) {
@@ -194,7 +195,7 @@ static void dialoguebox(const char* name, const char* msg, const char* color) {
         "red", "\033[1;91m"
     };
 
-    for (int i = 0; i < sizeof(colorCodes)/sizeof(colorCodes[0]); i+=2) {
+    for (long unsigned int i = 0; i < sizeof(colorCodes)/sizeof(colorCodes[0]); i+=2) {
         if (strcmp(color, colorCodes[i]) == 0) {
             printColor(colorCodes[i+1], name);
             printf(" >> %s", msg);
