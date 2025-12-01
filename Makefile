@@ -11,7 +11,7 @@ compile:
 	$(CC) -O3 -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
 
 devbuild:
-	$(CC) $(CFLAGS) -O0 -g -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
+	$(CC) $(CFLAGS) -O3 -g -o $(OUT_DIR)/$(OUT_NAME) $(PROJ_DIR)/$(PROJ_FILES)
 
 run:
 	clear
