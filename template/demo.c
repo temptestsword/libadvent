@@ -20,6 +20,8 @@ int numberOfQuests = 3;
 
 void gameLoop();
 
+
+
 // --- Main --- //
 
 int main() {
