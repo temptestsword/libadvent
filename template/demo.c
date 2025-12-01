@@ -1,8 +1,8 @@
 #include "../lib/libadvent.c"
 
+
+
 // --- Global Definitions --- //
-
-
 
 Item* g_inventory = NULL;  // Linked-list inventory root
 Player player = {"player", &g_inventory, 80, 15};

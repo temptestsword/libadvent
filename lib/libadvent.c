@@ -1,10 +1,7 @@
 #include "../lib/libadvent.h"
 
-// Simple UI pause
-void ui_wait() {
-    printf("\nPress Enter to continue...");
-    getchar();
-}
+
+// --- Simple definitions --- //
 
 const char* adv_cyan = "\033[1;36m";
 const char* adv_yellow = "\033[1;33m";
@@ -13,6 +10,12 @@ const char* adv_grey = "\033[1;90m";
 const char* adv_green = "\033[1;92m"; 
 const char* adv_blue = "\033[1;34m";
 const char* adv_red = "\033[1;91m";
+
+
+// Simple UI pause
+inline void ui_wait() {
+    printf("\nPress Enter to continue..."); getchar();
+}
 
 void combatscene(Player player, Entity enemy) {
     sys_clear();
@@ -75,12 +78,16 @@ void combatscene(Player player, Entity enemy) {
 }
 
 
-bool boolConfirmEnterAction(const char* name) {
-    printf("\nDo you want to enter the %s? (yes/no): ", name);
+bool boolConfirmAction(const char* text) {
+    printf("\n %s (yes/no): ");
     char choice[10];
     getstring(choice, sizeof(choice));
 
-    return (strcmp(choice, "yes") == 0 || strcmp(choice, "y") == 0);
+    if (strcmp(choice, "yes") == 0) {
+        return true;
+    } else {
+        return false;
+    };
 }
 
 

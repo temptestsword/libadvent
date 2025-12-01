@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 OUT_DIR = build
 OUT_NAME = demo
-PROJ_DIR = src
+PROJ_DIR = template
 PROJ_FILES = demo.c
 
 all: compile run
