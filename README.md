@@ -1,7 +1,8 @@
 # libadvent
 `libadvent` is a small C library to make text based adventure games.
 
-[!WARNING] Currently this project is very very simple, and often faces breaking changes *every day*
+> [!WARNING]
+> Currently this project is very very simple, and often faces breaking changes *every day*
 
 ## Fnctionalities
 1. SImple colored outputs
