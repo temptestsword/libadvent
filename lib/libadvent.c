@@ -77,9 +77,9 @@ void combatscene(Player player, Entity enemy) {
     }
 }
 
-
-bool boolConfirmAction(const char* text) {
-    printf("\n %s (yes/no): ");
+//useless restrict but it looks cool lol
+bool boolConfirmAction(const char* restrict text) {
+    printf("\n %s (yes/no): ", text);
     char choice[10];
     getstring(choice, sizeof(choice));
 

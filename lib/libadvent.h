@@ -4,16 +4,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
 
 #if defined(_WIN32) || defined(_WIN64)
     #include <windows.h>
-    #define sys_sleep(seconds) Sleep(seconds * 1000)
-    #define sys_clear() system("cls")
+    #define sys_sleep(seconds) fflush(stdout); Sleep(seconds * 1000)
+    #define sys_clear() fflush(stdout); system("cls")
 #elif defined(__APPLE__) || defined(__linux__)
     #include <unistd.h>
-    #define sys_sleep(seconds) sleep(seconds)
-    #define sys_clear() system("clear")
+    #define sys_sleep(seconds) fflush(stdout); sleep(seconds)
+    #define sys_clear() fflush(stdout); system("clear")
 #endif
 
 // Item structure for inventory management
@@ -47,26 +48,27 @@ typedef struct Player {
 } Player;
 
 // FUNCTION PROTOTYPES
-static void displayQuests(const Quest* quests, int questCount, int start, int end);
+static void displayQuests(const Quest* quests, size_t questCount, size_t start, size_t end);
 static Item* createItem(const char* name);
 static void addItem(Item** inventory, const char* name);
 static void removeItem(Item** inventory, const char* name);
 static void displayInventory(Item** inventory);
 static bool isItemInInventory(Item** inventory, const char* itemName);
 static void freeInventory(Item** inventory);
-static void clearInputBuffer();
-static void getstring(char* variable, int sizeofvariable);
+static inline void clearInputBuffer();
+static void getstring(char* variable, size_t sizeofvariable);
 
 // --------- Quest Management --------- //
-static void displayQuests(const Quest* quests, int questCount, int start, int end) {
-    if (start < 0 || end >= questCount || start > end) {
+static void displayQuests(const Quest* quests, size_t questCount, size_t start, size_t end) {
+    // start < 0 always returns false so removed it
+    if (end >= questCount || start > end) {
         printf("Invalid quest range.\n");
         return;
     }
 
     printf("=== Quests ===\n");
-    for (int i = start; i <= end; i++) {
-        printf("Quest #%d: %s\n", i + 1, quests[i].name);
+    for (size_t i = start; i <= end; i++) {
+        printf("Quest [%zu]: %s\n", i + 1, quests[i].name);
         printf("  Status: %s\n", quests[i].completed ? "Completed" : "In Progress");
         printf("  Description: %s\n\n", quests[i].description);
     }
@@ -88,7 +90,6 @@ static Item* createItem(const char* name) {
     return newItem;
 }
 
-// Modified to accept player's inventory
 static void addItem(Item** inventory, const char* name) {
     Item* newItem = createItem(name);
     if (newItem) {
@@ -97,29 +98,26 @@ static void addItem(Item** inventory, const char* name) {
     }
 }
 
-// Modified to accept player's inventory
 static void removeItem(Item** inventory, const char* name) {
     Item* current = *inventory;
     Item* prev = NULL;
 
-    while (current && strcmp(current->name, name) != 0) {
+    while (current) {
+        if (strcmp(current->name, name) == 0) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                *inventory = current->next;
+            }
+            free(current);
+            return;  // Exit early after freeing the item
+        }
         prev = current;
         current = current->next;
     }
-
-    if (current) {
-        if (prev) {
-            prev->next = current->next;
-        } else {
-            *inventory = current->next;
-        }
-        free(current);
-    } else {
-        printf("Item not found: %s\n", name);
-    }
+    printf("Item not found: %s\n", name);
 }
 
-// Modified to accept player's inventory
 static void displayInventory(Item** inventory) {
     if (!*inventory) {
         printf("Inventory is empty.\n");
@@ -134,8 +132,6 @@ static void displayInventory(Item** inventory) {
     }
 }
 
-
-// Modified to accept player's inventory
 static bool isItemInInventory(Item** inventory, const char* itemName) {
     const Item* current = (*inventory);
     while (current) {
@@ -147,7 +143,6 @@ static bool isItemInInventory(Item** inventory, const char* itemName) {
     return false;
 }
 
-// Modified to accept player's inventory
 static void freeInventory(Item** inventory) {
     Item* current = *inventory;
     Item* nextItem;
@@ -161,20 +156,23 @@ static void freeInventory(Item** inventory) {
 
 // --------- Input/Output Utils --------- //
 
-static void clearInputBuffer() {
-    char input;
-    while ((input = getchar()) != '\n' && input != EOF);  // Clear the input buffer
+static inline void clearInputBuffer() {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);  // Clear the input buffer
 }
 
-static void getstring(char* variable, int sizeofvariable) {
-    if (fgets(variable, sizeofvariable, stdin)) {
+static void getstring(char* variable, size_t sizeofvariable) {
+    if (!(fgets(variable, sizeofvariable, stdin))) {
+        fprintf(stderr, "Error: Failed to read input.\n");
+        exit(EXIT_FAILURE);
+    } else {
+        clearInputBuffer();
         size_t len = strlen(variable);
-        if (len > 0 && variable[len - 1] == '\n') {
+
+        // Remove newline if present
+        if (len > 0 && len < sizeofvariable && variable[len - 1] == '\n') {
             variable[len - 1] = '\0';
         }
-    } else {
-        strcpy(variable, "\0");
-        exit(EXIT_FAILURE);
     }
 }
 
@@ -184,26 +182,9 @@ static void printColor(const char* msg, const char* colorCode) {
     printf("%s%s\033[0m", colorCode, msg);
 }
 
-static void dialoguebox(const char* name, const char* msg, const char* color) {
-    static const char* colorCodes[] = {
-        "cyan", "\033[1;36m", 
-        "yellow", "\033[1;33m",
-        "magenta", "\033[1;35m",
-        "grey", "\033[1;90m", 
-        "green", "\033[1;92m", 
-        "blue", "\033[1;34m", 
-        "red", "\033[1;91m"
-    };
-
-    for (long unsigned int i = 0; i < sizeof(colorCodes)/sizeof(colorCodes[0]); i+=2) {
-        if (strcmp(color, colorCodes[i]) == 0) {
-            printColor(colorCodes[i+1], name);
-            printf(" >> %s", msg);
-            return;
-        }
-    }
-
-    printf("Invalid color. Supported colors: cyan, yellow, lightyellow, magenta, grey, green, blue, red.\n");
+static void dialoguebox(const char* msg, const char* name, const char* colorCode) {
+    printf("%s%s >> \033[0m", colorCode, name);
+    printf("%s", msg);
 }
 
 #endif
